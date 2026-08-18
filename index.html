@@ -7,19 +7,57 @@
 <title>Cedabet — Tasarım Ön İzleme</title>
 <style>
   :root {
-    --bg-purple: #0d0416;
     --bg-green: #0a1208;
-    --accent-purple: #a855f7;
+    --bg-purple: #0d0416;
     --accent-green: #a3e635;
+    --accent-purple: #a855f7;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; }
   body {
-    background: var(--bg-purple);
+    background: var(--bg-green);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     transition: background 0.4s ease;
   }
-  body.theme-green { background: var(--bg-green); }
+  body.theme-purple { background: var(--bg-purple); }
+
+  /* Minimal tema şeridi: sitenin üzerine binmez, içerikle birlikte kayar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 0;
+  }
+  .topbar button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  .topbar .dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .topbar button[data-theme="green"] .dot { background: var(--accent-green); }
+  .topbar button[data-theme="purple"] .dot { background: var(--accent-purple); }
+  .topbar button.active .dot {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+  }
+  .topbar button:not(.active) .dot { opacity: 0.45; }
+  .topbar button:hover .dot { opacity: 1; }
+  .topbar button:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.9);
+    outline-offset: -6px;
+  }
 
   .stage {
     max-width: 1440px;
@@ -35,87 +73,33 @@
   @media (max-width: 768px) {
     .stage { max-width: 520px; }
   }
-
-  .switcher {
-    position: fixed;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 4px;
-    padding: 5px;
-    border-radius: 999px;
-    background: rgba(10, 10, 14, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
-    z-index: 10;
-  }
-  .switcher button {
-    appearance: none;
-    border: none;
-    cursor: pointer;
-    font: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.75);
-    background: transparent;
-    padding: 10px 18px;
-    min-height: 44px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.25s ease, color 0.25s ease;
-  }
-  .switcher button .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex: none;
-  }
-  .switcher button[data-theme="purple"] .dot { background: var(--accent-purple); }
-  .switcher button[data-theme="green"] .dot { background: var(--accent-green); }
-  .switcher button.active {
-    background: rgba(255, 255, 255, 0.14);
-    color: #fff;
-  }
-  .switcher button:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 2px;
-  }
-  @media (max-width: 480px) {
-    .switcher { bottom: 12px; }
-    .switcher button { padding: 10px 14px; font-size: 13px; }
-  }
 </style>
 </head>
-<body class="theme-purple">
+<body class="theme-green">
+  <header class="topbar" aria-label="Tema seçimi">
+    <button type="button" data-theme="green" class="active" aria-pressed="true" aria-label="Yeşil tema" title="Yeşil tema"><span class="dot"></span></button>
+    <button type="button" data-theme="purple" aria-pressed="false" aria-label="Mor tema" title="Mor tema"><span class="dot"></span></button>
+  </header>
+
   <main class="stage">
-    <picture class="shot active" id="shot-purple">
-      <source media="(max-width: 768px)" srcset="assets/cedabet-purple-mobile.png" />
-      <img src="assets/cedabet-purple.png" alt="Cedabet — mor tema ön izleme" decoding="async" />
-    </picture>
-    <picture class="shot" id="shot-green">
+    <picture class="shot active" id="shot-green">
       <source media="(max-width: 768px)" srcset="assets/cedabet-green-mobile.png" />
-      <img src="assets/cedabet-green.png" alt="Cedabet — yeşil tema ön izleme" decoding="async" loading="lazy" />
+      <img src="assets/cedabet-green.png" alt="Cedabet — yeşil tema ön izleme" decoding="async" />
+    </picture>
+    <picture class="shot" id="shot-purple">
+      <source media="(max-width: 768px)" srcset="assets/cedabet-purple-mobile.png" />
+      <img src="assets/cedabet-purple.png" alt="Cedabet — mor tema ön izleme" decoding="async" loading="lazy" />
     </picture>
   </main>
 
-  <nav class="switcher" aria-label="Tema seçimi">
-    <button type="button" data-theme="purple" class="active" aria-pressed="true"><span class="dot"></span>Mor Tema</button>
-    <button type="button" data-theme="green" aria-pressed="false"><span class="dot"></span>Yeşil Tema</button>
-  </nav>
-
   <script>
-    const buttons = document.querySelectorAll(".switcher button");
+    const buttons = document.querySelectorAll(".topbar button");
     buttons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const theme = btn.dataset.theme;
         document.body.className = "theme-" + theme;
-        document.getElementById("shot-purple").classList.toggle("active", theme === "purple");
         document.getElementById("shot-green").classList.toggle("active", theme === "green");
+        document.getElementById("shot-purple").classList.toggle("active", theme === "purple");
         buttons.forEach((b) => {
           const on = b === btn;
           b.classList.toggle("active", on);
